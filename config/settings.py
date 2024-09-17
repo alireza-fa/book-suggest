@@ -176,3 +176,7 @@ else:
         }
     }
 
+
+from .app_settings.drf import *
+from .app_settings.jwt import *
+from .app_settings.api_docs import *
