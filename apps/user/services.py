@@ -1,9 +1,9 @@
 from functools import cache
 from abc import ABC, abstractmethod
 
-from common import codes
+from apps.common import codes
 from pkg.rich_error.error import RichError
-from user.repositories import get_user_repository
+from apps.user.repositories import get_user_repository
 
 
 class Repository(ABC):

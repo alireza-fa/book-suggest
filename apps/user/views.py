@@ -4,9 +4,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from common.http_response import response_with_error
-from user.serializers import UserAuthSerializer, UserInfoSerializer
-from user.services import get_user_service
+from apps.common.http_response import response_with_error
+from apps.user.serializers import UserAuthSerializer, UserInfoSerializer
+from apps.user.services import get_user_service
 
 
 SCHEMA_TAGS = ("Users",)
