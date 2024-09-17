@@ -1,6 +1,6 @@
 import uuid
 
-from authentication.models import UserAuth
+from apps.authentication.models import UserAuth
 
 
 class AuthenticationRepository:

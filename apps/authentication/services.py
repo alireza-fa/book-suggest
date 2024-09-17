@@ -7,8 +7,8 @@ from django.contrib.auth import get_user_model
 from django.core.cache import cache as django_cache
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from authentication.models import UserAuth
-from authentication.repositories import get_authentication_repository
+from apps.authentication.models import UserAuth
+from apps.authentication.repositories import get_authentication_repository
 
 
 @dataclass
@@ -26,6 +26,7 @@ class Repository(ABC):
 
     @abstractmethod
     def get_user_auth_by_user_id(self, user_id: int) -> Model:
+        pass
 
     @abstractmethod
     def create_user_auth(self, user_id: int) -> Model:
@@ -51,7 +52,7 @@ class AuthenticationService:
             else:
                 user_auth = self.repo.get_user_auth_by_user_id(user_id=user_id)
             django_cache.set(
-                key=self._get_user_auth_cache_key(user_id=user.id),
+                key=self._get_user_auth_cache_key(user_id=user_id),
                 value=user_auth, timeout=self.config.user_auth_cache_exp_in_seconds)
 
         return user_auth
@@ -62,8 +63,8 @@ class AuthenticationService:
         refresh = RefreshToken.for_user(user=user)
         access = refresh.access_token
 
-        refresh["uuid"] = user_auth.refresh_uuid
-        access["uuid"] = user_auth.access_uuid
+        refresh["uuid"] = str(user_auth.refresh_uuid)
+        access["uuid"] = str(user_auth.access_uuid)
 
         return {
             "refresh_token": str(refresh),
