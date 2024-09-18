@@ -11,5 +11,5 @@ urlpatterns = [
     # also we can use one view for all three below action, but I like every view write and do for single responsibility
     path("review/add/", BookReviewAddView.as_view(), name="book-review-add"),
     path("review/update/", BookReviewUpdateView.as_view(), name="book-review-update"),
-    path("review/delete/", BookReviewDeleteView.as_view(), name="book-review-delete"),
+    path("review/delete/<int:book_id>/", BookReviewDeleteView.as_view(), name="book-review-delete"),
 ]

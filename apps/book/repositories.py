@@ -37,6 +37,9 @@ class BookRepository:
     def update_book_review(self, user_id: int, book_id: int, rate: int):
         return BookReview.objects.filter(user_id=user_id, book_id=book_id).update(rate=rate)
 
+    def delete_book_review(self, user_id: int, book_id: int):
+        return BookReview.objects.filter(user_id=user_id, book_id=book_id).delete()
+
 
 def get_book_repository():
     return BookRepository()

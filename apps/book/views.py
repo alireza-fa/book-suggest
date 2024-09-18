@@ -63,6 +63,7 @@ class BookReviewUpdateView(APIView):
 
     @extend_schema(tags=SCHEMA_TAGS)
     def patch(self, request):
+        # we also can get book_id from query parameter
         serializer = self.serializer_class(data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         try:
@@ -77,5 +78,10 @@ class BookReviewDeleteView(APIView):
     permission_classes = (IsAuthenticated,)
 
     @extend_schema(tags=SCHEMA_TAGS)
-    def delete(self, request):
-        pass
+    def delete(self, request, book_id: int):
+        try:
+            service.delete_book_review(user_id=request.user.id, book_id=book_id)
+        except Exception as err:
+            return response_with_error(error=err)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)

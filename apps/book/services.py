@@ -28,6 +28,10 @@ class Repository(ABC):
     def update_book_review(self, user_id: int, book_id: int, rate: int):
         pass
 
+    @abstractmethod
+    def delete_book_review(self, user_id: int, book_id: int):
+        pass
+
 
 class BookService:
     Op = "book.services.BookService."
@@ -52,13 +56,18 @@ class BookService:
     def update_book_review(self, user_id: int, book_id: int, rate: int):
         op = self.Op + "update_book_review"
 
-        if not self.repo.check_book_is_exist_by_id(book_id=book_id):
-            raise RichError(op).set_code(codes.BOOK_NOT_FOUND)
-
         if not self.repo.check_book_review_is_exist(user_id=user_id, book_id=book_id):
             raise RichError(op).set_code(codes.BOOK_REVIEW_NOT_FOUND)
 
         self.repo.update_book_review(user_id=user_id, book_id=book_id, rate=rate)
+
+    def delete_book_review(self, user_id: int, book_id: int):
+        op = self.Op + "delete_book_review"
+
+        if not self.repo.check_book_review_is_exist(user_id=user_id, book_id=book_id):
+            raise RichError(op).set_code(codes.BOOK_REVIEW_NOT_FOUND)
+
+        self.repo.delete_book_review(user_id=user_id, book_id=book_id)
 
 
 @cache

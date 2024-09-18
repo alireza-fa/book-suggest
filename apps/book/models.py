@@ -40,7 +40,7 @@ class Book(BaseModel):
         # book title can be unique with condition: unique together(title, author)
 
     def __str__(self):
-        return f"title: {self.title} - {self.author} - {self.genre}"
+        return f"{self.id} title: {self.title} - {self.author} - {self.genre}"
 
 
 class BookReviewEnum:
