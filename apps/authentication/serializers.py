@@ -3,3 +3,7 @@ from rest_framework import serializers
 
 class TokenSerializer(serializers.Serializer):
     token = serializers.CharField()
+
+
+class RefreshTokenSerializer(serializers.Serializer):
+    refresh_token = serializers.CharField()

@@ -104,8 +104,20 @@ class AuthenticationService:
 
         return token
 
-    def refresh_access_token(self, refresh_token: str):
-        pass
+    def refresh_access_token(self, refresh_token_str: str) -> str:
+        op = self.Op + "refresh_access_token"
+
+        token = self.validate_token(token_str=refresh_token_str)
+        if token["token_type"] != "refresh":
+            raise RichError(op).set_msg("token type is not refresh token").set_code(codes.INVALID_REFRESH_TOKEN)
+
+        user_auth = self.get_user_auth(user_id=token["user_id"])
+
+        refresh = RefreshToken(token=str(token))
+        access = refresh.access_token
+        access["uuid"] = str(user_auth.access_uuid)
+
+        return str(access)
 
     def ban_token(self, user_id: int) -> None:
         pass

@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from authentication.serializers import TokenSerializer
+from authentication.serializers import TokenSerializer, RefreshTokenSerializer
 from authentication.services import get_authentication_service
 from common.http_response import response_with_error
 
@@ -27,10 +27,18 @@ class TokenVerifyView(APIView):
 
 
 class TokenRefreshView(APIView):
+    serializer_class = RefreshTokenSerializer
 
     @extend_schema(tags=SCHEMA_TAGS)
     def post(self, request):
-        pass
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            return Response(status=status.HTTP_200_OK, data={
+                "access_token": service.refresh_access_token(refresh_token_str=serializer.validated_data["refresh_token"])
+            })
+        except Exception as err:
+            return response_with_error(error=err)
 
 
 class TokenBanView(APIView):
