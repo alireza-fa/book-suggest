@@ -19,6 +19,9 @@ class AuthenticationRepository:
             refresh_uuid=uuid.uuid4(),
         )
 
+    def update_user_auth_uuid(self, user_id: int) -> int:
+        return self.Model.objects.filter(user_id=user_id).update(access_uuid=uuid.uuid4(), refresh_uuid=uuid.uuid4())
+
 
 def get_authentication_repository():
     return AuthenticationRepository()

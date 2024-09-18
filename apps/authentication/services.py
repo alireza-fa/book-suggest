@@ -34,6 +34,10 @@ class Repository(ABC):
     def create_user_auth(self, user_id: int) -> Model:
         pass
 
+    @abstractmethod
+    def update_user_auth_uuid(self, user_id: int) -> Model:
+        pass
+
 
 class AuthenticationService:
     Op = "authentication.services.AuthenticationService."
@@ -120,7 +124,9 @@ class AuthenticationService:
         return str(access)
 
     def ban_token(self, user_id: int) -> None:
-        pass
+        self.repo.update_user_auth_uuid(user_id=user_id)
+
+        django_cache.delete(key=self._get_user_auth_cache_key(user_id=user_id))
 
 
 @cache

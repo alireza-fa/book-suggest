@@ -1,5 +1,6 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -42,7 +43,13 @@ class TokenRefreshView(APIView):
 
 
 class TokenBanView(APIView):
+    permission_classes = (IsAuthenticated,)
 
     @extend_schema(tags=SCHEMA_TAGS)
-    def post(self, request):
-        pass
+    def get(self, request):
+        try:
+            service.ban_token(user_id=request.user.id)
+        except Exception as err:
+            return response_with_error(error=err)
+
+        return Response(status=status.HTTP_200_OK)

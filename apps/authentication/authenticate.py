@@ -28,7 +28,7 @@ class JWTAuthentication(BaseJWTAuthentication):
             return None
 
         try:
-            validated_token = service.validate_token(request=request, raw_token=raw_token.decode())
+            validated_token = service.validate_token(token_str=raw_token.decode())
         except Exception:
             raise InvalidToken(
                         {
