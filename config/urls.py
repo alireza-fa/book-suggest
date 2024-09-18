@@ -26,9 +26,9 @@ api_schema = [
 
 api_urls = [
     path("schema/", include(api_schema)),
-    path("users/", include("apps.user.urls")),
+    path("user/", include("apps.user.urls")),
     path("auth/", include("apps.authentication.urls")),
-    path("books/", include("apps.book.urls")),
+    path("book/", include("apps.book.urls")),
 ]
 
 urlpatterns = [

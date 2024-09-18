@@ -9,7 +9,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication as BaseJWT
 from rest_framework_simplejwt.tokens import Token
 from rest_framework_simplejwt.exceptions import InvalidToken
 
-from .services import get_authentication_service
+from apps.authentication.services import get_authentication_service
 
 
 User = get_user_model()

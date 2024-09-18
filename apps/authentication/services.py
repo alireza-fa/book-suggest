@@ -9,7 +9,7 @@ from rest_framework_simplejwt.tokens import RefreshToken, UntypedToken, Token
 
 from apps.authentication.models import UserAuth
 from apps.authentication.repositories import get_authentication_repository
-from common import codes
+from apps.common import codes
 from pkg.rich_error.error import RichError
 
 

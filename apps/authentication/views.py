@@ -4,9 +4,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from authentication.serializers import TokenSerializer, RefreshTokenSerializer
-from authentication.services import get_authentication_service
-from common.http_response import response_with_error
+from apps.authentication.serializers import TokenSerializer, RefreshTokenSerializer
+from apps.authentication.services import get_authentication_service
+from apps.common.http_response import response_with_error
 
 SCHEMA_TAGS = ("Auth",)
 service = get_authentication_service()
