@@ -5,10 +5,12 @@ from typing import Dict
 
 from django.contrib.auth import get_user_model
 from django.core.cache import cache as django_cache
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken, UntypedToken, Token
 
 from apps.authentication.models import UserAuth
 from apps.authentication.repositories import get_authentication_repository
+from common import codes
+from pkg.rich_error.error import RichError
 
 
 @dataclass
@@ -34,6 +36,7 @@ class Repository(ABC):
 
 
 class AuthenticationService:
+    Op = "authentication.services.AuthenticationService."
     User = get_user_model()
     Model = UserAuth
 
@@ -63,6 +66,7 @@ class AuthenticationService:
         refresh = RefreshToken.for_user(user=user)
         access = refresh.access_token
 
+        # we can put ip address or device name for validation and improve security
         refresh["uuid"] = str(user_auth.refresh_uuid)
         access["uuid"] = str(user_auth.access_uuid)
 
@@ -70,6 +74,41 @@ class AuthenticationService:
             "refresh_token": str(refresh),
             "access_token": str(access)
         }
+
+    def _validate_refresh_token(self, token: Token):
+        op = self.Op + "_validate_refresh_token"
+
+        user_auth = self.get_user_auth(user_id=token["user_id"])
+        if str(user_auth.refresh_uuid) != token["uuid"]:
+            raise RichError(op).set_code(codes.INVALID_REFRESH_TOKEN)
+
+    def _validate_access_token(self, token: Token):
+        op = self.Op + "_validate_access_token"
+
+        user_auth = self.get_user_auth(user_id=token["user_id"])
+        if str(user_auth.access_uuid) != token["uuid"]:
+            raise RichError(op).set_code(codes.INVALID_ACCESS_TOKEN)
+
+    def validate_token(self, token_str: str) -> Token:
+        op = self.Op + "validate_token"
+
+        try:
+            token = UntypedToken(token=token_str)
+        except Exception as err:
+            raise RichError(op).set_error(err).set_code(codes.INVALID_TOKEN)
+
+        if token["token_type"] == "refresh":
+            self._validate_refresh_token(token=token)
+        elif token["token_type"] == "access":
+            self._validate_access_token(token=token)
+
+        return token
+
+    def refresh_access_token(self, refresh_token: str):
+        pass
+
+    def ban_token(self, user_id: int) -> None:
+        pass
 
 
 @cache
