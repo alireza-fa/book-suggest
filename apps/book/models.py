@@ -8,7 +8,7 @@ User = get_user_model()
 
 
 class Author(BaseModel):
-    name = models.CharField(max_length=64, verbose_name=_("name"), db_index=True, unique=True)
+    name = models.CharField(max_length=120, verbose_name=_("name"), db_index=True, unique=True)
 
     class Meta:
         verbose_name = _("Author")
@@ -19,7 +19,7 @@ class Author(BaseModel):
 
 
 class Genre(BaseModel):
-    name = models.CharField(max_length=64, verbose_name=_("name"), unique=True, db_index=True)
+    name = models.CharField(max_length=120, verbose_name=_("name"), unique=True, db_index=True)
 
     class Meta:
         verbose_name = _("Genre")
@@ -37,6 +37,7 @@ class Book(BaseModel):
     class Meta:
         verbose_name = _("Book")
         verbose_name_plural = _("Books")
+        # book title can be unique with condition: unique together(title, author)
 
     def __str__(self):
         return f"title: {self.title} - {self.author} - {self.genre}"
