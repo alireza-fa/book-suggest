@@ -1,3 +1,5 @@
+from django.db.models import Avg, Count
+
 from apps.book.models import Book, BookReview
 
 
@@ -39,6 +41,33 @@ class BookRepository:
 
     def delete_book_review(self, user_id: int, book_id: int):
         return BookReview.objects.filter(user_id=user_id, book_id=book_id).delete()
+
+    def check_user_add_review_book(self, user_id: int) -> bool:
+        return BookReview.objects.only("id").filter(user_id=user_id).exists()
+
+    @staticmethod
+    def get_user_book_review_genres(user_id: int):
+        return BookReview.objects.filter(user_id=user_id).values_list("book__genre__id", flat=True)
+
+    def get_user_suggest_books(self, user_id: int):
+        user_reviews = BookReview.objects.filter(user_id=user_id)
+
+        genres_rated = (
+            user_reviews.values('book__genre').annotate(
+                avg_rate=Avg('rate'),
+                count=Count('book__genre')
+            ).order_by('-avg_rate', '-count')
+        )
+
+        top_genres = [genre['book__genre'] for genre in genres_rated[:3]]
+
+        recommended_books = Book.objects.filter(
+            genre__in=top_genres
+        ).exclude(
+            id__in=user_reviews.values_list('book_id', flat=True)
+        ).distinct()
+
+        return recommended_books
 
 
 def get_book_repository():

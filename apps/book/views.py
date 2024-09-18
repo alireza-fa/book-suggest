@@ -21,9 +21,13 @@ class BookListView(APIView):
     def get(self, request):
         try:
             paginator = self.pagination_class()
+
             paginated_queryset = paginator.paginate_queryset(
-                queryset=service.search(search=request.GET), request=request)
+                queryset=service.search(search=request.GET),
+                request=request)
+
             serializer = self.serializer_class(instance=paginated_queryset, many=True)
+
             return paginator.get_paginated_response(serializer.data)
         except Exception as err:
             return response_with_error(error=err)
@@ -31,10 +35,23 @@ class BookListView(APIView):
 
 class BookSuggestView(APIView):
     permission_classes = (IsAuthenticated,)
+    pagination_class = PageNumberPagination
+    serializer_class = BookListSerializer
 
     @extend_schema(tags=SCHEMA_TAGS)
     def get(self, request):
-        pass
+        try:
+            paginator = self.pagination_class()
+
+            paginated_queryset = paginator.paginate_queryset(
+                queryset=service.get_suggest_books(user_id=request.user.id),
+                request=request)
+
+            serializer = self.serializer_class(instance=paginated_queryset, many=True)
+
+            return paginator.get_paginated_response(serializer.data)
+        except Exception as err:
+            return response_with_error(error=err)
 
 
 class BookReviewAddView(APIView):
