@@ -1,4 +1,5 @@
 from apps.book.models import Book
+from apps.book.models import BookReview
 
 
 class BookRepository:
@@ -20,6 +21,19 @@ class BookRepository:
             queryset = queryset.filter(title__icontains=search.get("title"))
 
         return queryset
+
+    def check_book_is_exist_by_id(self, book_id: int) -> bool:
+        return self.Model.objects.only("id").filter(id=book_id).exists()
+
+    def check_book_review_is_exist(self, user_id: int, book_id: int):
+        return BookReview.objects.only("id").filter(user_id=user_id, book_id=book_id).exists()
+
+    def add_book_review(self, user_id: int, book_id: int, rate: int):
+        return BookReview.objects.create(
+            book_id=book_id,
+            user_id=user_id,
+            rate=rate
+        )
 
 
 def get_book_repository():

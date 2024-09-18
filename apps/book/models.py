@@ -70,3 +70,7 @@ class BookReview(BaseModel):
     class Meta:
         verbose_name = _("Book Review")
         verbose_name_plural = _("Book Reviews")
+        unique_together = [("book", "user")]
+
+    def __str__(self):
+        return f"{self.id} - {self.book} - {self.user} - rate: {self.rate}"

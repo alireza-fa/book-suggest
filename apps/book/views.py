@@ -1,7 +1,10 @@
 from drf_spectacular.utils import extend_schema
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.book.serializers import BookListSerializer
+from apps.book.serializers import BookListSerializer, BookReviewAddSerializer, BookReviewDetailSerializer
 from apps.book.services import get_book_service
 from apps.common.http_response import response_with_error
 from apps.common.pagination import PageNumberPagination
@@ -27,6 +30,7 @@ class BookListView(APIView):
 
 
 class BookSuggestView(APIView):
+    permission_classes = (IsAuthenticated,)
 
     @extend_schema(tags=SCHEMA_TAGS)
     def get(self, request):
@@ -34,13 +38,26 @@ class BookSuggestView(APIView):
 
 
 class BookReviewAddView(APIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = BookReviewAddSerializer
+    serializer_class_output = BookReviewDetailSerializer
 
     @extend_schema(tags=SCHEMA_TAGS)
     def post(self, request):
-        pass
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            return Response(
+                status=status.HTTP_201_CREATED,
+                data=self.serializer_class_output(instance=service.add_book_review(
+                    user_id=request.user.id, **serializer.validated_data)).data
+            )
+        except Exception as err:
+            return response_with_error(error=err)
 
 
 class BookReviewUpdateView(APIView):
+    permission_classes = (IsAuthenticated,)
 
     @extend_schema(tags=SCHEMA_TAGS)
     def patch(self, request):
@@ -48,6 +65,7 @@ class BookReviewUpdateView(APIView):
 
 
 class BookReviewDeleteView(APIView):
+    permission_classes = (IsAuthenticated,)
 
     @extend_schema(tags=SCHEMA_TAGS)
     def delete(self, request):

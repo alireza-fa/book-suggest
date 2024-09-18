@@ -36,4 +36,4 @@ class JWTAuthentication(BaseJWTAuthentication):
                         }
                     )
 
-        return self.get_user(validated_token), validated_token
+        return super().authenticate(request=request)
