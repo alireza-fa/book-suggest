@@ -1,5 +1,4 @@
-from apps.book.models import Book
-from apps.book.models import BookReview
+from apps.book.models import Book, BookReview
 
 
 class BookRepository:
@@ -34,6 +33,9 @@ class BookRepository:
             user_id=user_id,
             rate=rate
         )
+
+    def update_book_review(self, user_id: int, book_id: int, rate: int):
+        return BookReview.objects.filter(user_id=user_id, book_id=book_id).update(rate=rate)
 
 
 def get_book_repository():

@@ -44,6 +44,7 @@ class BookReviewAddView(APIView):
 
     @extend_schema(tags=SCHEMA_TAGS)
     def post(self, request):
+        # we also can get book_id from query parameter
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
@@ -58,10 +59,18 @@ class BookReviewAddView(APIView):
 
 class BookReviewUpdateView(APIView):
     permission_classes = (IsAuthenticated,)
+    serializer_class = BookReviewAddSerializer
 
     @extend_schema(tags=SCHEMA_TAGS)
     def patch(self, request):
-        pass
+        serializer = self.serializer_class(data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        try:
+            service.update_book_review(user_id=request.user.id, **serializer.validated_data)
+        except Exception as err:
+            return response_with_error(error=err)
+
+        return Response(status=status.HTTP_200_OK)
 
 
 class BookReviewDeleteView(APIView):
